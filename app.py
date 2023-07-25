@@ -16,9 +16,56 @@ def index_handler():
         colors = ["Red" , "Blue" , "Yellow"]        
     )
 
+@app.route("/examples/basic" , methods=["GET"])
+def basic_path():
+    return "Hello,World"
 
+@app.route("/examples/json" , methods=["GET"])
+def json_path():
+    ''' Shows how to return a json response '''
+    return jsonify({
+        "message": "This is a json path",
+        "success" : True,
+        "data" : []
+    }) , 200
+
+@app.route("/examples/templates" , methods=["GET"])
+def template_handler():
+    return render_template(
+        "example.html" , 
+        title = "Example Template",
+        services =  ["Coaching" , "Consultancy" , "Research"] ,
+        validUser =  {
+            "name" : "Adeleke Bright"
+        }
+    )
+
+# Create a contact page for handling contact us 
+
+@app.route("/contact" , methods=["GET" , "POST"])
+def contact_handler():
+    if request.method == "GET":
+        return render_template(
+            "contact.html",
+            title = "Contact us" 
+        )
+    
+    elif request.method == "POST":
+        username = request.form.get("name") 
+        email = request.form["email"] 
+        message = request.form.get("message")
+
+        return jsonify({
+            "success" : True , 
+            "data" : {
+                "message" : message , 
+                "username" : username,
+                "email":email
+            },
+            "message" : "We will get in touch with you"
+        }) ,201
+    
 #We want to leverage python's list and dictionary for adding, updating, deleting, and get 
-
 users = [] 
 
 @app.route("/users" , methods=["GET" , "POST"]) 

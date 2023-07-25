@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang=“en”>
+
+<head>
+    <title> {{ title }} </title>
+</head>
+
+<body>
+    <h1> Templating with Flask </h1>
+    {% if validUser: %}
+        <p> {{ validUser.name }} </p>
+    {% else %}
+        <p> Anonymous </p>
+    {% endif %}
+
+    <h2> We offer a range of services </h2>
+    {% if services : %}
+        <ul>
+            {% for service in services: %}
+            <li> {{service}} </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> There is no service offered right now </p>
+    {% endif %}
+</body>
+
+</html>
