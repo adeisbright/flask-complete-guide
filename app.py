@@ -64,7 +64,17 @@ def contact_handler():
             },
             "message" : "We will get in touch with you"
         }) ,201
-    
+
+# Handling Query String 
+@app.route("/search" , methods=["GET"]) 
+def search_handler():
+    value = request.args.get("q")
+    return jsonify({
+        "success"  :True ,
+        "message" : "You are searching for {}".format(value)
+    }),200
+
+
 #We want to leverage python's list and dictionary for adding, updating, deleting, and get 
 users = [] 
 

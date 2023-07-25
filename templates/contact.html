@@ -3,11 +3,13 @@
 
 <head>
     <title> {{ title }} </title>
+    <link href="/static/css//contact.css" rel="stylesheet"/>
 </head>
 
 <body>
     <h1> Contact Us </h1>
     <p> Do you have any thing you will want us to know, please get in touch with us </p>
+    <p id="serverMessage" class="ft-3"></p>
     <main>
         <form action="/contact" method="post">
             <div>
@@ -26,6 +28,7 @@
             <input type="submit" value="Submit">
         </form>
     </main>
+    <script src="/static/js/contact.js"></script>
 </body>
 
 </html>
