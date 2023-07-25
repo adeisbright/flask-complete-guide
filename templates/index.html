@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Blog: A Flask New Tutorial </title>
+
+</head>
+<body>
+    <p>Initial Template Structure from {{ author }}</p>
+    <section>
+        <h2> Here are the colors are like</h2>
+        <ul>
+            {% for color in colors:  %}
+               {% if color == "Yellow" :  %}
+
+                    <li style="background-color:yellow;"> {{color}} </li>
+                {% else %}
+                    <li> The color is {{color}}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+</body>
+</html>
