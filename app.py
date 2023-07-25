@@ -1,7 +1,26 @@
-from flask import Flask , request ,jsonify,render_template,url_for , session , redirect 
+from flask import Flask , request ,jsonify,render_template,url_for , session , redirect ,json 
 from werkzeug.security import generate_password_hash, check_password_hash 
+from dotenv import dotenv_values 
+from werkzeug.exceptions import HTTPException
+import jwt 
+
+CONFIG = dotenv_values(".env") 
 
 app = Flask(__name__) 
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 # @app.before_request
 
@@ -187,12 +206,47 @@ def dashboard_handler(name):
 
     return "Welcome {}. Count is {}".format(name , count)
 
+#Working with JWT Token 
+
+@app.route("/token" , methods=["GET"])
+def token_generator():
+    payload = {
+        "name" : "John Mahama" , 
+        "email" : "bola@gmail.com"
+    } 
+
+    token = jwt.encode(payload , "secret") 
+
+    return jsonify({
+        "token" : token 
+    }) , 200
+
+@app.route("/decode-token" , methods=["GET"])
+def token_handler():
+    auth = request.headers.get("Authorization") 
+    if not auth :
+        return jsonify({
+            "message" : "Missing Authorization Header"
+        }),401
+    auth_list = auth.split(" ") 
+    if auth_list[0] != "Bearer" or not auth_list[1]:
+        return jsonify({
+            "message" : "Bad Auth"
+        }),400
+    token = auth.split(" ")[1]
+    decoded  = jwt.decode(token, "secret" , ["HS256"]) 
+    if not decoded:
+          return jsonify({
+            "message" : "Could not decode the token"
+        }),500
+    return jsonify({
+        "success" :True
+    }) , 200
 
 if __name__ == "__main__":
-    host = "localhost" 
-    port = 4200 
+
     debug = True 
 
-    app.secret_key= "secret"
-    app.run(host , port , debug)
+    app.secret_key= CONFIG.get("APP_SECRET")
+    app.run(CONFIG.get("HOST") , int(CONFIG.get("PORT")) , debug)
    
