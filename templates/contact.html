@@ -3,7 +3,7 @@
 
 <head>
     <title> {{ title }} </title>
-    <link href="/static/css//contact.css" rel="stylesheet"/>
+    <link href="{{ url_for('static' , filename='css/contact.css') }}" rel="stylesheet"/>
 </head>
 
 <body>
@@ -11,7 +11,7 @@
     <p> Do you have any thing you will want us to know, please get in touch with us </p>
     <p id="serverMessage" class="ft-3"></p>
     <main>
-        <form action="/contact" method="post">
+        <form action="/contact" method="post" enctype="multipart/form-data">
             <div>
                 <label>Name</label>
                 <input type="text" name="name">
@@ -25,10 +25,14 @@
                 <textarea name="message">
                 </textarea>
             </div>
+            <div>
+                <label>File</label>
+                <input type="file" name="attachment">
+            </div>
             <input type="submit" value="Submit">
         </form>
     </main>
-    <script src="/static/js/contact.js"></script>
+    <script src="{{ url_for('static' , filename='js/contact.js') }}"></script>
 </body>
 
 </html>

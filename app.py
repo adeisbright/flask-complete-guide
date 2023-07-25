@@ -1,4 +1,4 @@
-from flask import Flask , request ,jsonify,render_template
+from flask import Flask , request ,jsonify,render_template,url_for , session , redirect 
 
 app = Flask(__name__) 
 
@@ -54,7 +54,10 @@ def contact_handler():
         username = request.form.get("name") 
         email = request.form["email"] 
         message = request.form.get("message")
-
+        file = request.files["attachment"] 
+        if file:
+            storagePath = "./temp/" + file.filename 
+            file.save(storagePath)
         return jsonify({
             "success" : True , 
             "data" : {
@@ -74,7 +77,25 @@ def search_handler():
         "message" : "You are searching for {}".format(value)
     }),200
 
+#Handle File Upload 
+@app.route("/upload" , methods=["GET" , "POST"])
+def upload_handler():
+    if request.method == "GET":
+        return render_template(
+            "upload.html",
+            title = "File Upload" 
+        )
+    
+    elif request.method == "POST":
+        f = request.files["profile"] 
+        filePath = "./temp/" + f.filename
+        f.save(filePath)
 
+        return jsonify({
+            "success" : True , 
+            "message" : "Your file was successfully uploaded"
+        }) ,201
+    
 #We want to leverage python's list and dictionary for adding, updating, deleting, and get 
 users = [] 
 
@@ -132,6 +153,25 @@ def user_handler(id):
     
     elif request.method =="PUT":
         return "Not Impelemted put yet"
+
+# Handle Redirection, Session, and Authentication using a basic sign up flow 
+
+@app.route("/auth/sign-up" , methods=["POST"])
+def registration_handler():
+    return "Registration"
+
+@app.route("/auth/login" , methods=["GET" , "POST"])
+def login_handler():
+    name = "Jason Statham"
+    return redirect(url_for("dashboard_handler" , name=name))
+
+@app.route("/dashboard/<name>" , methods=["GET"])
+
+def dashboard_handler(name):
+    count = session["count"] + 1
+    #session.pop("count" , None)
+    return "Welcome {}. Count is {}".format(name , count)
+
 
 if __name__ == "__main__":
     host = "localhost" 
