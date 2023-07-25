@@ -1,4 +1,5 @@
 from flask import Flask , request ,jsonify,render_template,url_for , session , redirect 
+from werkzeug.security import generate_password_hash, check_password_hash 
 
 app = Flask(__name__) 
 
@@ -162,14 +163,28 @@ def registration_handler():
 
 @app.route("/auth/login" , methods=["GET" , "POST"])
 def login_handler():
+    password = request.args.get("password") 
+    if not password :
+        return "Please provide password "
+    
+    hash_password = generate_password_hash(password) 
+    print(password , hash_password)
+    # Now, compare the passwords 
+    valid_password = "12345678" 
+    if not check_password_hash(hash_password , valid_password):
+        return "Password is not correct"
+    
     name = "Jason Statham"
     return redirect(url_for("dashboard_handler" , name=name))
 
 @app.route("/dashboard/<name>" , methods=["GET"])
 
 def dashboard_handler(name):
-    count = session["count"] + 1
+    session_count = session.get("count") if session.get("count") else 0 
+    count = session_count + 1
     #session.pop("count" , None)
+    session["count"] = count 
+
     return "Welcome {}. Count is {}".format(name , count)
 
 
@@ -178,4 +193,6 @@ if __name__ == "__main__":
     port = 4200 
     debug = True 
 
+    app.secret_key= "secret"
     app.run(host , port , debug)
+   
